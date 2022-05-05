@@ -1,26 +1,36 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+<AppHeader />
+<div class="w-full flex">
+  <router-view></router-view>
+ </div>
+ <teleport to="body">
+   <LoginModal />
+</teleport>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import AppHeader from './components/AppHeader';
+import LoginModal from './components/LoginModal';
+import firebase from "./utilities/firebase";
 
 export default {
-  name: 'App',
-  components: {
-    HelloWorld
-  }
+  mounted(){
+   
+        firebase.auth().onAuthStateChanged((user) => {
+          if(user){
+           this.$store.commit("setIsLoggedIn",true);
+           this.$store.commit("setAuthUser",user);
+          }
+          else{
+          this.$store.commit("setIsLoggedIn",false);
+          this.$store.commit("setAuthUser", {});
+          }
+        });
+  },
+  components:{ AppHeader,LoginModal },
 }
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+
 </style>
